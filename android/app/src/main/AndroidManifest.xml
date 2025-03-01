@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    
     <application
         android:label="cubex_mobile_dev_task"
         android:name="${applicationName}"

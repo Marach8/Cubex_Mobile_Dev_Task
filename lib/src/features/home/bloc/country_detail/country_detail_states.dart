@@ -1,0 +1,23 @@
+import '../../data/home_data_export.dart';
+
+abstract class CountryDetailState{}
+
+
+class CountryDetailEmptyState extends CountryDetailState{}
+
+class CountryDetailLoadingState extends CountryDetailState{}
+
+class CountryDetailDataState extends CountryDetailState{
+  final CountryData country;
+  final Map<String, String> countryImageDetails;
+  CountryDetailDataState({
+    required this.country,
+    required this.countryImageDetails
+  });
+}
+
+class CountryDetailErrorState extends CountryDetailState{
+  final String errorMsg;
+  final dynamic data;
+  CountryDetailErrorState({required this.errorMsg, this.data});
+}

@@ -34,6 +34,17 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  another_flushbar: ^1.12.30
+  http: ^1.3.0
+  flutter_svg: ^2.0.17
+  iconsax: ^0.0.8
+  dio: ^5.8.0+1
+  bloc: ^9.0.0
+  flutter_bloc: ^9.0.0
+  shimmer: ^3.0.0
+  path: ^1.9.1
+  readmore: ^3.0.0
+
 
 dev_dependencies:
   flutter_test:
@@ -58,9 +69,10 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/images/jpeg_images/
+    - assets/images/png_images/
+    - assets/images/svg_images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -73,17 +85,27 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
+  fonts:
+    - family: Axiforma
+      fonts:
+        - asset: assets/axiforma_fonts/Axiforma-Heavy.ttf
+          weight: 900
+        - asset: assets/axiforma_fonts/Axiforma-Black.ttf
+          weight: 800
+        - asset: assets/axiforma_fonts/Axiforma-ExtraBold.ttf
+          weight: 700
+        - asset: assets/axiforma_fonts/Axiforma-Bold.ttf
+          weight: 600
+        - asset: assets/axiforma_fonts/Axiforma-SemiBold.ttf
+          weight: 500
+        - asset: assets/axiforma_fonts/Axiforma-Medium.ttf
+          weight: 400
+        - asset: assets/axiforma_fonts/Axiforma-Regular.ttf
+          weight: 300
+        - asset: assets/axiforma_fonts/Axiforma-Light.ttf
+          weight: 200
+        - asset: assets/axiforma_fonts/Axiforma-Thin.ttf
+          weight: 100
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
