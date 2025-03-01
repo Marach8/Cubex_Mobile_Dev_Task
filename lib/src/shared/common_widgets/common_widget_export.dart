@@ -8,5 +8,5 @@ export 'error_state_widget.dart';
 export 'animated_switcher.dart';
 export 'search_filter_widget.dart';
 export 'country_flag_display.dart';
-export 'shimmer.dart';
+export 'shimmer_widget.dart';
 export 'sliver_header_delegate.dart';

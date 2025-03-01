@@ -38,7 +38,7 @@ class _CBHomeScreenState extends State<CBHomeScreen> {
             physics: const BouncingScrollPhysics(),
             headerSliverBuilder: (_, __) => [
               SliverAppBar(
-                floating: true, //snap: true,
+                floating: true,
                 title: Text(
                   CBStrings.ALL_COUNTRIES,
                   style: Theme.of(context).textTheme.headlineMedium,
