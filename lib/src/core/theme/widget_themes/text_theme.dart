@@ -61,8 +61,8 @@ class CBTextTheme{
     ),
 
     labelMedium: TextStyle(
-      color: CBColors.white,
-      fontSize: CBFontSizes.size10,
+      color: CBColors.white.withValues(alpha: 0.8),
+      fontSize: CBFontSizes.size12,
       fontWeight: CBFontWeights.w400,
       overflow: TextOverflow.ellipsis,
     ),

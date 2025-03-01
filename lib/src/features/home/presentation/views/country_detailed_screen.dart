@@ -36,12 +36,12 @@ class CBCountryDetailedScreen extends StatelessWidget {
               final hasError = state is CountryDetailErrorState;
               final hasData = state is CountryDetailDataState;                
         
-              CountryData? country;
+              List<List<MapEntry<String, String>>>? groupedCountryInfo;
               Map<String, String>? countryImageDetails;
               String? errorMsg;
         
               if (hasData) {
-                country = state.country;
+                groupedCountryInfo = state.groupedCountryInfo;
                 countryImageDetails = state.countryImageDetails;
               }
         
@@ -59,21 +59,30 @@ class CBCountryDetailedScreen extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(15, 15, 15, kBottomNavigationBarHeight),
                     physics: const BouncingScrollPhysics(),
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         RenderCountryImages(countryImageDetails: countryImageDetails),
 
                         const SizedBox(height: 30),
 
-                        ...(country ?? CountryData()).mapOfFields.entries.map(
-                          (entry){
-                            String entryVal = '';
-                            (entry.value.contains('null') || entry.value.isEmpty) ?
-                              entryVal = CBStrings.DATA_UNAVAILABLE : entryVal = entry.value;
-                            return RenderCountryInfo(
-                              keyItem: entry.key,
-                              value: entryVal
-                            );
-                          }
+                        ...(groupedCountryInfo ?? []).map(
+                          (group) => Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ...group.map(
+                                (entry) {
+                                  String entryVal = '';
+                                  (entry.value.contains('null') || entry.value.isEmpty) ?
+                                    entryVal = CBStrings.DATA_UNAVAILABLE : entryVal = entry.value;
+                                  return RenderCountryInfo(
+                                    keyItem: entry.key,
+                                    value: entryVal
+                                  );
+                                }
+                              ),
+                              const SizedBox(height: 15)
+                            ]
+                          )
                         )
                       ],
                     ),

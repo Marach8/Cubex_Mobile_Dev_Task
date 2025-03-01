@@ -19,9 +19,13 @@ class CountryDetailBloc extends Bloc<CountryDetailEvent, CountryDetailState>{
                 CBStrings.MAP: country.maps?.googleMaps ?? '',
                 CBStrings.COAT_OF_ARMS: country.coatOfArms?.svg ?? '',
               };
+              
+              final groupedCountryInfo = CBHelperFuncs.groupMapEntries(country.mapOfFields);
+
               emit(
                 CountryDetailDataState(
                   country: country,
+                  groupedCountryInfo: groupedCountryInfo,
                   countryImageDetails: countryImageDetails
                 )
               );

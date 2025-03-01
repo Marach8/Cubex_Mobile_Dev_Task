@@ -48,4 +48,15 @@ class CBHelperFuncs{
       return CBColors.white.withValues(alpha: 0.5);
     }
   }
+
+
+  static List<List<MapEntry<K, V>>> groupMapEntries<K, V>(Map<K, V> map, {int groupSize = 4}) {
+    final entries = map.entries.toList();
+    final List<List<MapEntry<K, V>>> groupedMap = [];
+    for (int i = 0; i < entries.length; i += groupSize) {
+      final end = (i + groupSize < entries.length) ? i + groupSize : entries.length;
+      groupedMap.add(entries.sublist(i, end));
+    }
+    return groupedMap;
+  }
 }

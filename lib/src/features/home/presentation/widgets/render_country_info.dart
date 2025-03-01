@@ -11,30 +11,33 @@ class RenderCountryInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          keyItem.capitalize,
-          style: Theme.of(context).textTheme.titleSmall
-        ),
-        Text(
-          ' : ',
-          style: Theme.of(context).textTheme.headlineMedium
-        ),
-    
-        const SizedBox(width: 5),
-    
-        Expanded(
-          child: ReadMoreText(
-            value,
-            trimMode: TrimMode.Length,
-            trimExpandedText: CBStrings.SHOW_LESS,
-            trimLength: 20,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            keyItem.capitalize,
+            style: Theme.of(context).textTheme.titleSmall
+          ),
+          Text(
+            ' : ',
             style: Theme.of(context).textTheme.headlineMedium
           ),
-        )
-      ],
+      
+          const SizedBox(width: 5),
+      
+          Expanded(
+            child: ReadMoreText(
+              value,
+              trimMode: TrimMode.Length,
+              trimExpandedText: CBStrings.SHOW_LESS,
+              trimLength: 20,
+              style: Theme.of(context).textTheme.headlineMedium
+            ),
+          )
+        ],
+      ),
     );
   }
 }

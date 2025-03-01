@@ -2,10 +2,6 @@
 
 class CBStrings{
   const CBStrings._();
-
-  static const SVG = 'svg';
-  static const PNG = 'png';
-  static const JPEG = 'jpeg';
   static const AXIFORMA = 'Axiforma';
 
   static const ALL_COUNTRIES = 'All Countries';
@@ -17,8 +13,6 @@ class CBStrings{
   static const COAT_OF_ARMS = 'Coat of Arms';
   static const MAP = 'Map';
 
-  static const DROP_DOWN_OPENED = 'Drop down state';
-  static const SEARCH_KEY = 'Search result';
   static const SHOW_LESS = ' show less';
   static const NO_RECORDS_FOUND = 'No records found for this search!';
 }

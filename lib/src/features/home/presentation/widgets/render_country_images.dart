@@ -19,16 +19,29 @@ class RenderCountryImages extends StatelessWidget {
           children: [
             CBContainer(
               height: shouldShow ? CBHelperFuncs.getScreenHeight(context) * 0.4 : 0,
-              width: CBHelperFuncs.getScreenWidth(context),
               child: shouldShow ? PageView.builder(
                 itemCount: countryImageDetails?.length,
                 onPageChanged: (pageIndex) => context.read<DotIndicatorCubit>().goToPage(pageIndex),
                 itemBuilder: (_, pageIndex){
                   final flagUrl = countryImageDetails?.values.elementAtOrNull(pageIndex);
-                  return CBFlagDisplay(
-                    flagUrl: flagUrl ?? '',
-                    height: CBHelperFuncs.getScreenHeight(context) * 0.4,
-                    fit: BoxFit.cover,
+                  final nameOfField = countryImageDetails?.keys.elementAtOrNull(pageIndex);
+
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: CBFlagDisplay(
+                          flagUrl: flagUrl ?? '',
+                          width: CBHelperFuncs.getScreenWidth(context),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        nameOfField?.capitalize ?? '',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ],
                   );
                 }
               ) : const SizedBox.shrink(),

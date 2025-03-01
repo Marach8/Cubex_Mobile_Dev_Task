@@ -8,10 +8,12 @@ class CountryDetailEmptyState extends CountryDetailState{}
 class CountryDetailLoadingState extends CountryDetailState{}
 
 class CountryDetailDataState extends CountryDetailState{
-  final CountryData country;
+  final CountryData? country;
+  final List<List<MapEntry<String, String>>> groupedCountryInfo;
   final Map<String, String> countryImageDetails;
   CountryDetailDataState({
-    required this.country,
+    this.country,
+    required this.groupedCountryInfo,
     required this.countryImageDetails
   });
 }

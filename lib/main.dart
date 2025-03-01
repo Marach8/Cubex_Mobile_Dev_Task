@@ -26,12 +26,6 @@ class CBApp extends StatelessWidget {
         textScaler: const TextScaler.linear(0.83),
       ),
       child: MaterialApp(
-        // scrollBehavior: const MaterialScrollBehavior().copyWith(
-        //   dragDevices: {
-        //     PointerDeviceKind.mouse,
-        //     PointerDeviceKind.touch,
-        //   },
-        // ),
         debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.system,
         darkTheme: CBThemeData.darkTheme,

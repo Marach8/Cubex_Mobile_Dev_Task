@@ -24,7 +24,7 @@ class CBAppBar extends StatelessWidget implements PreferredSizeWidget{
   @override
   Widget build(context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       child: AppBar(
         backgroundColor: backgroundColor,
         flexibleSpace: flexibleSpace,
