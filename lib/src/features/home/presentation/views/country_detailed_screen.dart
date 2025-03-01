@@ -52,7 +52,8 @@ class CBCountryDetailedScreen extends StatelessWidget {
               return CBScalingAnimatedSwitcher(
                 child: isLoading ? CBLoadingIndicator(key: ValueKey(0)) :
                   hasError ? CBErrorStateWidget(
-                    text: errorMsg, key: ValueKey(1)
+                    text: errorMsg, key: ValueKey(1),
+                    onRefresh: () => context.read<CountryDetailBloc>().add(FetchCountryEvent(countryName))
                   ) : hasData ?
                   SingleChildScrollView(
                     key: ValueKey(2),
