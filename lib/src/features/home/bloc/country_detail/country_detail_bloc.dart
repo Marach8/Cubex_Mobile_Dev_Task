@@ -26,12 +26,27 @@ class CountryDetailBloc extends Bloc<CountryDetailEvent, CountryDetailState>{
                 )
               );
             },
-            error: (error) => emit(
-              CountryDetailErrorState(errorMsg: error.error.message ?? CBStrings.ERR_OCCURED)
-            ),
+            error: (error) {
+              if(error.error.message.toLowerCase().contains('null')){
+                emit(
+                  CountryDetailErrorState(errorMsg: CBStrings.ERR_OCCURED)
+                );
+                return;
+              }
+              emit(
+                CountryDetailErrorState(errorMsg: error.error.message)
+              );
+            }
           );
         }
+        
         catch (e){
+          if(e.toString().toLowerCase().contains('null')){
+            emit(
+              CountryDetailErrorState(errorMsg: CBStrings.ERR_OCCURED)
+            );
+            return;
+          }
           emit(
             CountryDetailErrorState(errorMsg: e.toString())
           );

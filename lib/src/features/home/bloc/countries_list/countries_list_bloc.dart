@@ -6,107 +6,69 @@ class CountriesListBloc extends Bloc<CountriesListEvent, CountriesListState>{
     _homeRepo = homeRepo ?? HomeRepoImpl(),
 
     super(CountriesListEmptyState()){
+      List<Country> cachedCountries = [];
+
       on<FetchCountriesEvent>((_, emit)async{
         emit(CountriesListLoadingState());
 
         try{
           final response = await _homeRepo.fetchCountries();
           response.when(
-            successful: (result) => emit(
-              CountriesListDataState(countries: result.data?.countries ?? [])
-            ),
-            error: (error) => emit(
-              CountriesListErrorState(errorMsg: error.error.message ?? CBStrings.ERR_OCCURED)
-            ),
+            successful: (result){
+              cachedCountries = result.data?.countries ?? [];
+              emit(
+                CountriesListDataState(countries: result.data?.countries ?? [])
+              );
+            },
+            error: (error){
+              if(error.error.message.toLowerCase().contains('null')){
+                emit(
+                  CountriesListErrorState(errorMsg: CBStrings.ERR_OCCURED)
+                );
+                return;
+              }
+              emit(
+                CountriesListErrorState(errorMsg: error.error.message)
+              );
+            }
           );
         }
+        
         catch (e){
+          if(e.toString().toLowerCase().contains('null')){
+            emit(
+              CountriesListErrorState(errorMsg: CBStrings.ERR_OCCURED)
+            );
+            return;
+          }
           emit(
             CountriesListErrorState(errorMsg: e.toString())
           );
         }
       });
-    }
+      
 
-}
+      on<FilterCountriesEvent>((event, emit)async{
+        final searchKey = event.searchKey;
 
+        emit(CountriesListLoadingState());
 
+        if(searchKey.isEmpty){
+          emit(CountriesListDataState(countries: cachedCountries));
+          return;
+        }
 
-
-// final usersProvider =
-//   StateNotifierProvider<UsersNotifier, AsyncValue<List<User>?>>(
-//     (ref) => UsersNotifier(ref)
-// );
-
-// class UsersNotifier extends StateNotifier<AsyncValue<List<User>?>> {
-//   UsersNotifier(this.ref)
-//     : homeRepo = ref.read(homeRepoProvider),
-//       super(const AsyncData(null));
-
-//   final Ref ref;
-//   final HomeRepo homeRepo;
-
-//   List<User>? _listOfUsers;
-
-
-//   Future<GenericResponseModel> fetchUsers() async {   
-//     state = const AsyncLoading(); 
-//     try{
-//       final response = await homeRepo.fetchUsers();
-
-//       final result = response.when(
-//         successful: (result){
-//           final usersList = result.data?.users;
-//           _listOfUsers = usersList;
-//           state = AsyncData(usersList);
-//           return GenericResponseModel(
-//             isSuccessful: true,
-//             responseMessage: ''
-//           );
-//         },
+        final filteredCountries = cachedCountries.where(
+          (country) => (country.name?.official?.toLowerCase().contains(searchKey.toLowerCase()) ?? false)
+        ).toList();
         
-//         error: (error){
-//           state = AsyncData(null);
-//           return GenericResponseModel(
-//             isSuccessful: false,
-//             responseMessage: error.error.message
-//           );
-//         }
-//       );
 
-//       return result;
-//     }
-//     catch (e){
-//       state = AsyncData(null);
-//       return GenericResponseModel(
-//         isSuccessful: false,
-//         responseMessage: e.toString()
-//       );
-//     }
-//   }
+        if(filteredCountries.isEmpty){
+          emit(CountriesListEmptyState());
+          return;
+        }
 
-
-
-//   void filterUsers(String searchKey) async{
-//     state = const AsyncLoading();
-    
-//     if(searchKey.isEmpty){
-//       ref.invalidate(globalStringProvider(HealTStrings.SEARCH_KEY));
-//       state = AsyncData(_listOfUsers);
-//       return;
-//     }
-
-//     final filteredUsers = _listOfUsers?.where(
-//       (user) => (user.name?.toLowerCase().contains(searchKey.toLowerCase()) ?? false)
-//     ).toList();
-    
-//     ///Writes the searchKey to the Widget that will change the color of the text of the filtered items.
-//     HealTHelperFuncs.setAProvider(
-//       value: searchKey, ref: ref,
-//       provider: globalStringProvider(HealTStrings.SEARCH_KEY)
-//     );
-
-//     state = AsyncData(filteredUsers);
-//   }
-
-// }
+        emit(CountriesListDataState(countries: filteredCountries));
+      });
+    }
+}

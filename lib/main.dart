@@ -8,6 +8,7 @@ void main(){
         BlocProvider(create: (_) => CountriesListBloc()),
         BlocProvider(create: (_) => CountryDetailBloc()),
         BlocProvider(create: (_) => DotIndicatorCubit()),
+        BlocProvider(create: (_) => SearchkeyCubit()),
       ],
       child: CBApp()
     )

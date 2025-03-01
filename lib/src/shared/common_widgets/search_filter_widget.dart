@@ -1,53 +1,50 @@
 import 'package:cubex_mobile_dev_task/src/global_export.dart';
 
-class CBFilterWidget extends StatelessWidget {
+class CBFilterWidget<B extends BlocBase<String>> extends StatelessWidget{
   final String title;
-  final String providerIdentity;
   final TextStyle? style;
   final String? padLeft, padRight;
 
   const CBFilterWidget({
     super.key,
     required this.title,
-    required this.providerIdentity,
     required this.style,
-    this.padLeft, 
-    this.padRight
+    this.padLeft,
+    this.padRight,
   });
 
   @override
   Widget build(context) {
-    // final searchQuery = ref.watch(globalStringProvider(providerIdentity));
-    final listOfStrings = title.trim().split('');
-
-    return BlocBuilder<CountriesListBloc, CountriesListState>(
+    return BlocBuilder<B, String>(
       builder: (_, state) {
+        final listOfStrings = title.trim().split('');
+
         return Text.rich(
           TextSpan(
             children: [
-              if(padLeft != null) TextSpan(
+              if (padLeft != null) TextSpan(
                 text: padLeft,
-                style:style                              
+                style: style,
               ),
               ...listOfStrings.map(
-                (stringOfText){
-                  final shouldHighlightString = ''.contains(stringOfText.toLowerCase());
+                (stringOfText) {
+                  final shouldHighlightString = state.toLowerCase().contains(stringOfText.toLowerCase());
                   return TextSpan(
                     text: stringOfText,
-                    style: shouldHighlightString ? style?.copyWith(
-                      color: CBColors.yellow
-                    ) : style                              
+                    style: shouldHighlightString 
+                      ? style?.copyWith(color: CBColors.yellow)
+                      : style,
                   );
-                }
+                },
               ),
-              if(padRight != null) TextSpan(
+              if (padRight != null) TextSpan(
                 text: padRight,
-                style:style                              
+                style: style,
               ),
-            ]
-          )
+            ],
+          ),
         );
-      }
+      },
     );
   }
 }

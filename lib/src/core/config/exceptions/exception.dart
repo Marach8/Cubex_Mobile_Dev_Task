@@ -1,41 +1,68 @@
-import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
-/// Custom exception class for handling exceptions in the API client
+/// custom exception class for handling exceptions in the api_client
 class CBException implements Exception {
   CBException(this.message, {this.code});
 
-  final dynamic message;
+  final String message;
   final int? code;
 
-  static CBException getException(dynamic err) {
+  // ignore: prefer_constructors_over_static_methods, type_annotate_public_apis
+  static CBException getException(err) {
     if (err is SocketException) {
       return InternetConnectException(kInternetConnectionError, 0);
-    } else if (err is TimeoutException) {
-      return OtherExceptions(err.message, 0);
-    } else if (err is http.Response) {
-      switch (err.statusCode) {
-        case 500:
-        case 502:
-          return InternalServerException(statusCode: err.statusCode);
-        case 400:
-        case 403:
-        case 401:
-        case 404:
-        case 409:
-        case 413:
+    } 
+    else if (err is DioException) {
+      switch (err.type) {
+        case DioExceptionType.cancel:
           return OtherExceptions(
-              jsonDecode(err.body)['message'] ?? kDefaultError, err.statusCode);
-        default:
-          return OtherExceptions(jsonDecode(err.body)['message'] ?? kDefaultError, err.statusCode);
+            kRequestCancelledError, err.response?.statusCode);
+        case DioExceptionType.connectionTimeout:
+        case DioExceptionType.receiveTimeout:
+        case DioExceptionType.sendTimeout:
+        case DioExceptionType.connectionError:
+          return InternetConnectException(
+              kTimeOutError, err.response?.statusCode ?? 0);
+
+        case DioExceptionType.badResponse:
+        case DioExceptionType.badCertificate:
+        case DioExceptionType.unknown:
+          switch (err.response?.statusCode) {
+            case 500:
+              return InternalServerException(
+                  statusCode: err.response?.statusCode);
+            case 404:
+            case 502:
+              return InternalServerException(
+                  statusCode: err.response?.statusCode);
+            case 400:
+              return OtherExceptions(
+                  err.response?.data['message'], err.response?.statusCode);
+            case 403:
+              return OtherExceptions(
+                  err.response?.data['message'], err.response?.statusCode);
+            case 401:
+              return UnAuthorizedException(
+                  statusCode: err.response?.statusCode);
+            case 413:
+              return OtherExceptions(kFileTooLarge, err.response?.statusCode);
+            case 409:
+              return OtherExceptions(
+                  err.response?.data['message'], err.response?.statusCode);
+            default:
+              // default exception error message
+              return OtherExceptions(
+                  err.response?.data['message'], err.response?.statusCode);
+          }
       }
-    } else {
+    } 
+    else {
       return OtherExceptions(kDefaultError, 0);
     }
   }
 }
+
 
 class OtherExceptions implements CBException {
   OtherExceptions(this.newMessage, this.statusCode);
@@ -47,7 +74,7 @@ class OtherExceptions implements CBException {
   String toString() => message;
 
   @override
-  dynamic get message => newMessage;
+  String get message => newMessage;
 
   @override
   int? get code => statusCode;

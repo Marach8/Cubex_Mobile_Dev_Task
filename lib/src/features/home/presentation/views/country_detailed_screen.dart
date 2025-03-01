@@ -50,7 +50,6 @@ class CBCountryDetailedScreen extends StatelessWidget {
               }
         
               return CBScalingAnimatedSwitcher(
-                duration: 1000,
                 child: isLoading ? CBLoadingIndicator(key: ValueKey(0)) :
                   hasError ? CBErrorStateWidget(
                     text: errorMsg, key: ValueKey(1)
@@ -62,31 +61,9 @@ class CBCountryDetailedScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         RenderCountryImages(countryImageDetails: countryImageDetails),
-                        
-                        const SizedBox(height: 10),
-                        BlocBuilder<DotIndicatorCubit, int>(
-                          builder: (_, state) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: List.generate(
-                                countryImageDetails?.length ?? 3,
-                                (index) {
-                                  final isSelected = index == state;
-                                  return CBContainer(
-                                    margin: const EdgeInsets.only(right: 5),
-                                    color: CBHelperFuncs.getColor(context, isSelected),
-                                    height: 4, radius: 5,
-                                    width: isSelected ? 30 : 4,
-                                    child: const SizedBox.shrink(),
-                                  );
-                                }
-                              )
-                            );
-                          }
-                        ),
+
                         const SizedBox(height: 30),
-                  
+
                         ...(country ?? CountryData()).mapOfFields.entries.map(
                           (entry){
                             String entryVal = '';

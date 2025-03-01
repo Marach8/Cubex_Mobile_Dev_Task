@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:cubex_mobile_dev_task/src/global_export.dart';
 
 class CBHomeScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class _CBHomeScreenState extends State<CBHomeScreen> {
 
   @override
   void dispose(){
-    // CBHelperFuncs.disposeDebouncer();
+    CBHelperFuncs.disposeDebouncer();
     super.dispose();
   }
 
@@ -29,54 +30,97 @@ class _CBHomeScreenState extends State<CBHomeScreen> {
   @override
   Widget build(context) {
     return CBAnnotatedRegion(
-      child: GestureDetector(
-        onVerticalDragUpdate: (details) async{
-          // final inFilterMode = ref.read(globalStringProvider(CBStrings.SEARCH_KEY)).isNotEmpty;
-          if (details.primaryDelta! > 0){
-            context.read<CountriesListBloc>().add(FetchCountriesEvent());
-          }
-        },
-        child: Scaffold(
-          appBar: CBAppBar(
-            title: Text(
-              CBStrings.ALL_COUNTRIES,
-              style: Theme.of(context).textTheme.headlineMedium,
+      child: Scaffold(
+
+        body: SafeArea(
+          child: NestedScrollView(
+            floatHeaderSlivers: true,
+            physics: const BouncingScrollPhysics(),
+            headerSliverBuilder: (_, __) => [
+              SliverAppBar(
+                floating: true, //snap: true,
+                title: Text(
+                  CBStrings.ALL_COUNTRIES,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+              ),
+          
+              BlocBuilder<CountriesListBloc, CountriesListState>(
+                builder: (_, state) {
+                  final showField = state is CountriesListDataState
+                    || state is CountriesListEmptyState;
+                  
+                  if(!showField) return const SliverToBoxAdapter(child: SizedBox.shrink());
+          
+                  return SliverPersistentHeader(
+                    pinned: true,
+                    delegate: CBSliverHeader(
+                      maxExt: 70, minExt: 70, rebuild: false,
+                      child: ClipRRect(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                          child: CBContainer(
+                            height: 70,
+                            margin: const EdgeInsets.symmetric(horizontal: 15),
+                            child: CBTextField(
+                              hintText: CBStrings.ENETER_SEARCH_KEY,
+                              onChanged: (text) => CBHelperFuncs.callDebouncer(
+                                500,
+                                (){
+                                  context.read<CountriesListBloc>().add(FilterCountriesEvent(searchKey: text));
+                                  context.read<SearchkeyCubit>().updateSearchKey(text);
+                                }
+                              )
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              )
+            ],
+          
+          
+            body: BlocConsumer<CountriesListBloc, CountriesListState>(
+              listenWhen: (_, curr) => curr is CountriesListErrorState,
+              listener: (_, curr){
+                if(curr is CountriesListErrorState){
+                  showAppNotification(
+                    context: context,
+                    icon: Icon(Icons.warning,),
+                    text: curr.errorMsg
+                  );
+                }
+              },
+              builder: (_, state) {
+                final isLoading = state is CountriesListLoadingState;
+                final hasError = state is CountriesListErrorState;
+                final countriesEmtpy = state is CountriesListEmptyState;
+                
+                if(isLoading){
+                  return Center(child: CBLoadingIndicator());
+                }
+                if(hasError){
+                  return Center(
+                    child: CBErrorStateWidget(
+                      onRefresh: () => context.read<CountriesListBloc>().add(FetchCountriesEvent()),
+                    ),
+                  );
+                }
+                if(countriesEmtpy){
+                  return Center(child: CBErrorStateWidget(text: CBStrings.NO_RECORDS_FOUND));
+                }
+          
+                final countries = (state as CountriesListDataState).countries;
+          
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: CBCountryListView(countries: countries),
+                );
+              }
             ),
           ),
-        
-          body: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                BlocBuilder<CountriesListBloc, CountriesListState>(
-                  
-                  builder: (_, state) {
-                    bool enabled = true;
-                    //final users = ref.watch(usersProvider);
-                    //final inFilterMode = ref.read(globalStringProvider(CBStrings.SEARCH_KEY)).isNotEmpty;
-                    
-                    //We want to disable the textField only when we are loading and 
-                    //when we weren't able to fetch data from the fetchUsers api call
-                    // if(users is AsyncLoading){enabled = false;}
-                    // else if((users.value ?? []).isEmpty && !inFilterMode){enabled = false;}
-                    
-                    return CBTextField(
-                      enabled: enabled,
-                      hintText: CBStrings.ENETER_SEARCH_KEY,
-                      // onChanged: (text) => CBHelperFuncs.callDebouncer(
-                      //   200,
-                      //   () => ref.read(usersProvider.notifier).filterUsers(text)
-                      // )
-                    );
-                  }
-                ),
-                    
-                const SizedBox(height: 20),
-                const CBCountryListView(),
-              ],
-            ),
-          )
         ),
       ),
     );
